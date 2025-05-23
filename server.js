@@ -12,15 +12,9 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-  origin:
-    process.env.NODE_ENV === "production"
-      ? "https://research-pied.vercel.app"
-      : "http://localhost:3000",
-  methods: "GET,POST,PUT,DELETE",
-  allowedHeaders: "Content-Type, Authorization",
-  api: {
-    externalResolver: true,
-  },
+  origin: ["http://localhost:3000", "https://research-pied.vercel.app"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
 app.use(cors(corsOptions));
