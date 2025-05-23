@@ -17,7 +17,7 @@ const productSchema = new mongoose.Schema({
   producter: String,
   images: [String],
   variants: [variantSchema],
-  slug: { type: String, required: true, unique: true },
+  slug: { type: String, unique: true },
 });
 
 const Product = mongoose.model("Product", productSchema);
