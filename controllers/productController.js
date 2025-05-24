@@ -53,21 +53,17 @@ exports.getProductsByCategory = async (req, res) => {
 
 exports.getProductBySlug = async (req, res) => {
   try {
-    const slugWithId = req.params.slug;
-    const parts = slugWithId.split("-");
+    const slug = req.params.slug;
 
-    const id = parts.shift();
-    const slug = parts.join("-");
-
-    const product = await Product.findOne({ id: id, slug: slug });
+    const product = await Product.findOne({ slug });
 
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: "محصول پیدا نشد" });
     }
 
     res.json(product);
   } catch (error) {
-    console.error("Error fetching product:", error);
+    console.error("خطا در دریافت محصول:", error);
     res.status(500).json({ message: error.message });
   }
 };
