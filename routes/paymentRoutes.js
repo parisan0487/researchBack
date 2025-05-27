@@ -5,6 +5,9 @@ const router = express.Router();
 router.post("/payment", async (req, res) => {
   const { amount, description } = req.body;
 
+  console.log("BODY:", req.body);
+  console.log("MERCHANT:", process.env.ZARINPAL_MERCHANT_ID);
+
   const isDev = process.env.NODE_ENV !== "production";
   const callback_url = isDev
     ? "http://localhost:3000/basket/success"
@@ -41,6 +44,7 @@ router.post("/payment", async (req, res) => {
     res
       .status(500)
       .json({ error: "خطا در ارتباط با زرین‌پال", detail: err.message });
+    console.error("Zarinpal Error:", err.response?.data || err.message);
   }
 });
 
