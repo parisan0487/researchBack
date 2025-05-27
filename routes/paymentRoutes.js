@@ -37,7 +37,7 @@ router.post("/payment", async (req, res) => {
 
     if (data.data.code === 100) {
       res.json({
-        url: `https://www.zarinpal.com/pg/StartPay/${data.data.authority}`,
+        url: `https://sandbox.zarinpal.com/pg/StartPay/${data.data.authority}`, // لینک Sandbox
       });
     } else {
       res.status(400).json({
