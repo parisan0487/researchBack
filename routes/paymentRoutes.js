@@ -5,8 +5,9 @@ const router = express.Router();
 router.post("/payment", async (req, res) => {
   const { amount, description } = req.body;
 
-  console.log("BODY:", req.body);
-  console.log("MERCHANT:", process.env.ZARINPAL_MERCHANT_ID);
+  // لاگ برای بررسی
+  console.log("📥 Payment BODY:", req.body);
+  console.log("🔑 MERCHANT ID:", process.env.ZARINPAL_MERCHANT_ID);
 
   const isDev = process.env.NODE_ENV !== "production";
   const callback_url = isDev
@@ -22,7 +23,7 @@ router.post("/payment", async (req, res) => {
 
   try {
     const response = await axios.post(
-      "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentRequest.json",
+      "https://sandbox.zarinpal.com/pg/v4/payment/request.json",
       params,
       {
         headers: {
@@ -33,18 +34,22 @@ router.post("/payment", async (req, res) => {
 
     const { data } = response;
 
-    if (data.Status === 100) {
+    // لاگ پاسخ از زرین‌پال
+    console.log("📨 Zarinpal Response:", data);
+
+    if (data.code === 100) {
       res.json({
-        url: `https://sandbox.zarinpal.com/pg/StartPay/${data.Authority}`,
+        url: `https://www.zarinpal.com/pg/StartPay/${data.authority}`,
       });
     } else {
-      res.status(400).json({ error: "درخواست ناموفق", status: data.Status });
+      res.status(400).json({ error: "درخواست ناموفق", status: data.code });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ error: "خطا در ارتباط با زرین‌پال", detail: err.message });
-    console.error("Zarinpal Error:", err.response?.data || err.message);
+    console.error("❌ Zarinpal Error:", err.response?.data || err.message);
+    res.status(500).json({
+      error: "خطا در ارتباط با زرین‌پال",
+      detail: err.response?.data || err.message,
+    });
   }
 });
 
