@@ -5,7 +5,6 @@ const router = express.Router();
 router.post("/payment", async (req, res) => {
   const { amount, description } = req.body;
 
-  // لاگ برای بررسی
   console.log("📥 Payment BODY:", req.body);
   console.log("🔑 MERCHANT ID:", process.env.ZARINPAL_MERCHANT_ID);
 
@@ -34,15 +33,18 @@ router.post("/payment", async (req, res) => {
 
     const { data } = response;
 
-    // لاگ پاسخ از زرین‌پال
     console.log("📨 Zarinpal Response:", data);
 
-    if (data.code === 100) {
+    if (data.data.code === 100) {
       res.json({
-        url: `https://www.zarinpal.com/pg/StartPay/${data.authority}`,
+        url: `https://www.zarinpal.com/pg/StartPay/${data.data.authority}`,
       });
     } else {
-      res.status(400).json({ error: "درخواست ناموفق", status: data.code });
+      res.status(400).json({
+        error: "درخواست ناموفق",
+        status: data.data.code,
+        message: data.data.message,
+      });
     }
   } catch (err) {
     console.error("❌ Zarinpal Error:", err.response?.data || err.message);
