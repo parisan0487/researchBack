@@ -8,6 +8,9 @@ const router = express.Router();
 const Product = require("../models/Product");
 
 router.post("/add", protect, async (req, res) => {
+  console.log("BODY:", req.body);
+  console.log("USER:", req.user);
+
   try {
     const { productId, quantity } = req.body;
     const userId = req.user._id;
@@ -21,7 +24,7 @@ router.post("/add", protect, async (req, res) => {
       return res.status(404).json({ message: "محصول یافت نشد" });
     }
 
-   
+
     const variant = product.variants?.[0];
 
     if (variant && variant.stock < quantity) {
