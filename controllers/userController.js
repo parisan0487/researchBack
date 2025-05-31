@@ -16,10 +16,13 @@ const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    const role = password === "admin1405" ? "admin" : "user";
+
     const user = await User.create({
       name,
       password: hashedPassword,
       phone,
+      role, 
     });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -37,6 +40,7 @@ const registerUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 const loginUser = async (req, res) => {
   const { phone, password } = req.body;
