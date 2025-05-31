@@ -111,10 +111,49 @@ const admin = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "خطا در واکشی کاربران" });
+  }
+};
+
+const updateUserRole = async (req, res) => {
+  try {
+    const { role } = req.body;
+    if (!["user", "admin"].includes(role)) {
+      return res.status(400).json({ message: "نقش نامعتبر است" });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "کاربر پیدا نشد" });
+    }
+    user.role = role;
+    await user.save();
+    res.json({ message: "نقش کاربر به‌روزرسانی شد", user });
+  } catch (error) {
+    res.status(500).json({ message: "خطا در تغییر نقش کاربر" });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "کاربر حذف شد" });
+  } catch (error) {
+    res.status(500).json({ message: "خطا در حذف کاربر" });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
   updateUserProfile,
   admin,
+  getAllUsers,
+  updateUserRole,
+  deleteUser,
 };
