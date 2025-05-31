@@ -84,6 +84,7 @@ exports.addProduct = async (req, res) => {
     }
 
     const newProduct = new Product({
+      id: Date.now().toString(),
       name,
       slug,
       price,
