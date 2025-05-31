@@ -9,44 +9,36 @@ const Product = require("../models/Product");
 
 router.post("/add", protect, async (req, res) => {
   try {
-    const { productId, color, size, quantity } = req.body;
-
+    const { productId, quantity } = req.body;
     const userId = req.user._id;
 
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({ message: "شناسه محصول معتبر نیست" });
     }
 
-    const product = await Product.findOne({
-      _id: productId,
-      "variants.color": color,
-      "variants.size": size,
-    });
-
+    const product = await Product.findById(productId);
     if (!product) {
-      return res
-        .status(404)
-        .json({ message: "محصول یا واریانت مورد نظر یافت نشد" });
+      return res.status(404).json({ message: "محصول یافت نشد" });
     }
 
-    const variant = product.variants.find(
-      (v) => v.color === color && v.size === size
-    );
+   
+    const variant = product.variants?.[0];
 
-    if (variant.stock < quantity) {
+    if (variant && variant.stock < quantity) {
       return res.status(400).json({ message: "موجودی کافی نیست" });
     }
 
-    await product.save();
-
-    let cart = await Cart.findOne({ user: userId }).populate("items.product");
-
+    let cart = await Cart.findOne({ user: userId });
     if (!cart) {
       cart = new Cart({ user: userId, items: [] });
     }
 
     const existingItem = cart.items.find(
-      (item) => item.variant.color === color && item.variant.size === size
+      (item) =>
+        item.product.toString() === productId &&
+        (!item.variant || !variant || (
+          item.variant.color === variant.color && item.variant.size === variant.size
+        ))
     );
 
     if (existingItem) {
@@ -54,19 +46,21 @@ router.post("/add", protect, async (req, res) => {
     } else {
       cart.items.push({
         product: productId,
-        variant: { color, size, stock: variant.stock },
+        variant: variant
+          ? { color: variant.color, size: variant.size, stock: variant.stock }
+          : undefined,
         quantity,
       });
     }
 
     await cart.save();
-
     res.status(200).json({ message: "محصول با موفقیت به سبد خرید اضافه شد" });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "خطایی رخ داد", error: error.message });
   }
 });
+
 
 router.get("/", protect, async (req, res) => {
   console.log("req of front", req.user._id);
