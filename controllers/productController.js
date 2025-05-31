@@ -159,3 +159,39 @@ exports.searchProducts = async (req, res) => {
     res.status(500).json({ message: "خطا در جستجو" });
   }
 };
+
+
+exports.updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedFields = req.body;
+
+    const updatedProduct = await Product.findByIdAndUpdate(id, updatedFields, {
+      new: true,
+    });
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "محصول یافت نشد" });
+    }
+
+    res.json({ message: "محصول با موفقیت ویرایش شد", product: updatedProduct });
+  } catch (error) {
+    res.status(500).json({ message: "خطا در ویرایش محصول" });
+  }
+};
+
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Product.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "محصول یافت نشد" });
+    }
+
+    res.json({ message: "محصول با موفقیت حذف شد" });
+  } catch (error) {
+    res.status(500).json({ message: "خطا در حذف محصول" });
+  }
+};
