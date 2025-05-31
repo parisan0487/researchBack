@@ -85,7 +85,6 @@ router.get("/", protect, async (req, res) => {
 router.delete("/remove/:productId", protect, async (req, res) => {
   try {
     const { productId } = req.params;
-    const { color, size } = req.query;
     const userId = req.user._id;
 
     let cart = await Cart.findOne({ user: userId });
@@ -95,12 +94,7 @@ router.delete("/remove/:productId", protect, async (req, res) => {
     }
 
     cart.items = cart.items.filter(
-      (item) =>
-        !(
-          item.product.toString() === productId &&
-          item.variant.color === color &&
-          item.variant.size === size
-        )
+      (item) => item.product.toString() !== productId
     );
 
     await cart.save();
@@ -110,5 +104,6 @@ router.delete("/remove/:productId", protect, async (req, res) => {
     res.status(500).json({ message: "خطایی رخ داد", error: error.message });
   }
 });
+
 
 module.exports = router;
