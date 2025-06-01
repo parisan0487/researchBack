@@ -8,8 +8,8 @@ const cartRoutes = require("./routes/cartRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const verifyRoute = require("./routes/verifyRoute");
 const ordersRouter = require("./routes/orderRoutes");
-const paymentRouter = require("./routes/payment");
-const paymentVerifyRouter = require("./routes/paymentVerify");
+const paymentRouter = require("./routes/paymentRoutes");
+const paymentVerifyRouter = require("./routes/verifyRoute");
 
 dotenv.config();
 connectDB();
