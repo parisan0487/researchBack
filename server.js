@@ -8,8 +8,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const verifyRoute = require("./routes/verifyRoute");
 const ordersRouter = require("./routes/orderRoutes");
-const paymentRouter = require("./routes/paymentRoutes");
-const paymentVerifyRouter = require("./routes/verifyRoute");
+
 
 dotenv.config();
 connectDB();
@@ -33,8 +32,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api", paymentRoutes);
 app.use("/api", verifyRoute);
 app.use("/api/orders", ordersRouter);
-app.use("/api/payment", paymentRouter);
-app.use("/api/payment/verify", paymentVerifyRouter);
+
 
 
 const PORT = process.env.PORT || 5000;
