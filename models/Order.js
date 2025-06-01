@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema(
             enum: ["pending", "paid", "shipped", "delivered"],
             default: "pending",
         },
-        amount: { type: Number, required: true }, // مبلغ کل سفارش
+        amount: { type: Number, required: true }, 
         paidAt: Date,
         transactionId: String,
     },
