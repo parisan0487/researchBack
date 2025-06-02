@@ -18,4 +18,15 @@ router.post("/", protect, async (req, res) => {
     }
 });
 
+
+router.get("/user-orders", protect, async (req, res) => {
+    try {
+      const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
+      res.json(orders);
+    } catch (err) {
+      res.status(500).json({ message: "خطا در دریافت سفارشات", error: err.message });
+    }
+  });
+  
+
 module.exports = router;
