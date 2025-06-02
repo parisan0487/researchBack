@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User");
+const User = require("../models/UserModel");
 const Product = require("../models/Product");
 const Order = require("../models/Order");
 const { protect, adminProtect } = require("../middleware/authMiddleware");
 
 // 📌 آمار کلی داشبورد
-router.get("/dashboard-stats", protect, isAdmin, async (req, res) => {
+router.get("/dashboard-stats", protect, adminProtect, async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();
     const totalProducts = await Product.countDocuments();
@@ -29,7 +29,7 @@ router.get("/dashboard-stats", protect, isAdmin, async (req, res) => {
 });
 
 // 📌 آمار ماهانه: تعداد سفارش و درآمد هر ماه
-router.get("/monthly-stats", protect, isAdmin, async (req, res) => {
+router.get("/monthly-stats", protect, adminProtect, async (req, res) => {
   try {
     const stats = await Order.aggregate([
       {
