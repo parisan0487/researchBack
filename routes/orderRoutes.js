@@ -26,6 +26,7 @@ router.get("/user-orders", protect, async (req, res) => {
             .populate("items.productId", "name price");
 
         res.json(orders);
+        console.log(orders);
     } catch (err) {
         res.status(500).json({ message: "خطا در دریافت سفارشات", error: err.message });
     }
@@ -41,7 +42,6 @@ router.get("/", protect, adminProtect, async (req, res) => {
             .populate("items.productId", "name price");
 
         res.status(200).json(orders);
-        console.log(orders);
 
     } catch (err) {
         res.status(500).json({ message: "خطا در دریافت سفارشات", error: err.message });
