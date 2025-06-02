@@ -30,7 +30,7 @@ router.get("/user-orders", protect, async (req, res) => {
 
 
 
-router.get("/all", protect, adminProtect, async (req, res) => {
+router.get("/", protect, adminProtect, async (req, res) => {
     try {
         const orders = await Order.find()
             .populate("userId", "name phone")
