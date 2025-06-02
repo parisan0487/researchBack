@@ -34,7 +34,7 @@ router.get("/", protect, adminProtect, async (req, res) => {
     try {
         const orders = await Order.find()
             .populate("userId", "name phone")
-            .populate("items.productId", "title price"); 
+            .populate("items.productId", "name price"); 
 
         res.status(200).json(orders);
 
