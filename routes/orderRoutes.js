@@ -30,18 +30,14 @@ router.get("/user-orders", protect, async (req, res) => {
 
 
 
-router.get("/all", protect, async (req, res) => {
+router.get("/all", protect, adminProtect, async (req, res) => {
     try {
-        
-        if (req.user.role !== "admin") {
-            return res.status(403).json({ message: "دسترسی غیرمجاز" });
-        }
-
         const orders = await Order.find()
             .populate("userId", "name phone")
             .populate("items.productId", "title price"); 
 
         res.status(200).json(orders);
+        console.log(orders)
     } catch (err) {
         res.status(500).json({ message: "خطا در دریافت سفارشات", error: err.message });
     }
