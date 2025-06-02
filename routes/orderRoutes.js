@@ -30,7 +30,6 @@ router.get("/user-orders", protect, async (req, res) => {
 
 
 
-
 router.get("/all", protect, async (req, res) => {
     try {
         
@@ -47,7 +46,6 @@ router.get("/all", protect, async (req, res) => {
         res.status(500).json({ message: "خطا در دریافت سفارشات", error: err.message });
     }
 });
-
 
 
 module.exports = router;
