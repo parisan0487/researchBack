@@ -8,6 +8,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const verifyRoute = require("./routes/verifyRoute");
 const ordersRouter = require("./routes/orderRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 
 dotenv.config();
@@ -32,6 +33,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api", paymentRoutes);
 app.use("/api", verifyRoute);
 app.use("/api/orders", ordersRouter);
+app.use("/api/admin", adminRoutes);
 
 
 
