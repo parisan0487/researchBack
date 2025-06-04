@@ -70,7 +70,17 @@ exports.getProductBySlug = async (req, res) => {
 
 exports.addProduct = async (req, res) => {
   try {
-    const { name, price, description, variants, categories } = req.body;
+    const {
+      name,
+      price,
+      discount,
+      description,
+      producter,
+      images,
+      feature,
+      variants,
+      categories,
+    } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: "نام محصول الزامی است" });
@@ -88,19 +98,27 @@ exports.addProduct = async (req, res) => {
       name,
       slug,
       price,
+      discount,
       description,
+      producter,
+      images,
+      feature,
       variants,
       categories,
     });
+
     await newProduct.save();
 
-    res
-      .status(201)
-      .json({ message: "محصول با موفقیت اضافه شد", product: newProduct });
+    res.status(201).json({
+      message: "محصول با موفقیت اضافه شد",
+      product: newProduct,
+    });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "خطا در افزودن محصول" });
   }
 };
+
 
 exports.addMultipleProducts = async (req, res) => {
   try {
