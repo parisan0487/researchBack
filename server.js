@@ -9,6 +9,7 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const verifyRoute = require("./routes/verifyRoute");
 const ordersRouter = require("./routes/orderRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const upload = require("./routes/upload");
 
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use("/api", paymentRoutes);
 app.use("/api", verifyRoute);
 app.use("/api/orders", ordersRouter);
 app.use("/api/admin", adminRoutes);
+app.use("/api/upload", upload);
 
 
 
