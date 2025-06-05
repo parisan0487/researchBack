@@ -2,11 +2,7 @@ const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 
-exports.createOrder = async (userId, items, address, paymentInfo) => {
-    if (!items || items.length === 0) {
-        throw new Error("سبد خرید خالی است");
-    }
-
+exports.createOrder = async (userId, items, orderData) => {
     for (const item of items) {
         const product = await Product.findById(item.productId);
         const variant = product?.variants?.[0];
@@ -14,25 +10,16 @@ exports.createOrder = async (userId, items, address, paymentInfo) => {
         if (!product || (variant && variant.stock < item.quantity)) {
             throw new Error(`موجودی ${product?.name || "محصول"} کافی نیست`);
         }
-
-        // کاهش موجودی
-        if (variant) {
-            variant.stock -= item.quantity;
-            await product.save();
-        }
     }
 
-    const order = await Order.create({
-        userId,
-        items,
-        address,
-        paymentInfo,
-    });
-
-    await Cart.findOneAndUpdate({ user: userId }, { $set: { items: [] } });
-
+    const order = await Order.create({ ...orderData, userId });
     return order;
 };
+
+exports.clearCart = async (userId) => {
+    await Cart.findOneAndUpdate({ user: userId }, { $set: { items: [] } });
+};
+
 
 exports.getUserOrders = async (userId) => {
     return await Order.find({ userId })

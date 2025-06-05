@@ -2,11 +2,21 @@ const orderService = require("../services/orderService");
 
 exports.createOrder = async (req, res) => {
     try {
-        const { items, address, paymentInfo } = req.body;
-        const order = await orderService.createOrder(req.user._id, items, address, paymentInfo);
+        const userId = req.user._id;
+        const { items } = req.body;
+
+        if (!items || items.length === 0) {
+            return res.status(400).json({ message: "سبد خرید خالی است" });
+        }
+
+        const order = await orderService.createOrder(userId, items, req.body);
+
+        // خالی کردن سبد خرید
+        await orderService.clearCart(userId);
+
         res.status(201).json(order);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        res.status(500).json({ message: "خطا در ثبت سفارش", error: err.message });
     }
 };
 
@@ -27,3 +37,4 @@ exports.getAllOrders = async (req, res) => {
         res.status(500).json({ message: "خطا در دریافت سفارشات", error: err.message });
     }
 };
+
