@@ -1,21 +1,8 @@
-const Product = require("../models/Product");
-const slugify = require("slugify");
+const productService = require("../services/productService");
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const { color, size } = req.query;
-
-    const filters = {};
-
-    if (color) {
-      filters["variants.color"] = { $in: color.split(",") };
-    }
-
-    if (size) {
-      filters["variants.size"] = { $in: size.split(",") };
-    }
-
-    const products = await Product.find(filters);
+    const products = await productService.getAllProducts(req.query);
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: "خطا در دریافت محصولات" });
@@ -24,136 +11,64 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getProductById = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const product = await Product.findOne({ id });
-
-    if (!product) {
-      return res.status(404).json({ message: "محصول یافت نشد" });
-    }
-
+    const product = await productService.getProductById(req.params.id);
+    if (!product) return res.status(404).json({ message: "محصول یافت نشد" });
     res.json(product);
   } catch (error) {
-    console.error("خطا در دریافت محصول بر اساس آیدی", error);
     res.status(500).json({ message: "خطا در دریافت محصول" });
   }
 };
 
 exports.getProductsByCategory = async (req, res) => {
   try {
-    const category = req.params.category;
-    const products = await Product.find({ categories: category });
+    const products = await productService.getProductsByCategory(req.params.category);
     res.json(products);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "خطا در دریافت محصولات بر اساس دسته‌بندی" });
+    res.status(500).json({ message: "خطا در دریافت محصولات بر اساس دسته‌بندی" });
   }
 };
 
 exports.getProductBySlug = async (req, res) => {
   try {
-    const slug = req.params.slug;
-
-    const product = await Product.findOne({ slug });
-
-    if (!product) {
-      return res.status(404).json({ message: "محصول پیدا نشد" });
-    }
-
+    const product = await productService.getProductBySlug(req.params.slug);
+    if (!product) return res.status(404).json({ message: "محصول پیدا نشد" });
     res.json(product);
   } catch (error) {
-    console.error("خطا در دریافت محصول:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
 exports.addProduct = async (req, res) => {
   try {
-    const {
-      name,
-      price,
-      discount,
-      description,
-      producter,
-      images,
-      feature,
-      variants,
-      categories,
-    } = req.body;
-
-    if (!name) {
+    if (!req.body.name) {
       return res.status(400).json({ message: "نام محصول الزامی است" });
     }
 
-    let slug = slugify(name, { lower: true, strict: true });
-
-    let existingProduct = await Product.findOne({ slug });
-    if (existingProduct) {
-      slug = `${slug}-${Date.now()}`;
-    }
-
-    const newProduct = new Product({
-      id: Date.now().toString(),
-      name,
-      slug,
-      price,
-      discount,
-      description,
-      producter,
-      images,
-      feature,
-      variants,
-      categories,
-    });
-
-    await newProduct.save();
-
+    const newProduct = await productService.addProduct(req.body);
     res.status(201).json({
       message: "محصول با موفقیت اضافه شد",
       product: newProduct,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "خطا در افزودن محصول" });
   }
 };
 
-
 exports.addMultipleProducts = async (req, res) => {
   try {
-    const { products } = req.body;
-
-    if (!products || !Array.isArray(products)) {
-      return res.status(400).json({ message: "فرمت داده‌ها نادرست است" });
-    }
-
-    const productsWithSlug = await Promise.all(
-      products.map(async (product) => {
-        let slug = slugify(product.name, { lower: true, strict: true });
-
-        let existingProduct = await Product.findOne({ slug });
-        if (existingProduct) {
-          slug = `${slug}-${Date.now()}`;
-        }
-
-        return { ...product, slug };
-      })
-    );
-
-    const addedProducts = await Product.insertMany(productsWithSlug);
+    const addedProducts = await productService.addMultipleProducts(req.body.products);
     res.status(201).json({
       message: "محصولات با موفقیت اضافه شدند",
       products: addedProducts,
     });
   } catch (error) {
-    res.status(500).json({ message: "خطا در افزودن محصولات" });
+    res.status(400).json({ message: error.message || "خطا در افزودن محصولات" });
   }
 };
 
 exports.deleteAllProducts = async (req, res) => {
   try {
-    await Product.deleteMany({});
+    await productService.deleteAllProducts();
     res.status(200).json({ message: "تمام محصولات با موفقیت حذف شدند" });
   } catch (error) {
     res.status(500).json({ message: "خطا در حذف محصولات" });
@@ -162,36 +77,17 @@ exports.deleteAllProducts = async (req, res) => {
 
 exports.searchProducts = async (req, res) => {
   try {
-    const { q } = req.query;
-
-    if (!q) {
-      return res.status(400).json({ message: "عبارت جستجو وارد نشده است" });
-    }
-
-    const products = await Product.find({
-      name: { $regex: q, $options: "i" },
-    });
-
+    const products = await productService.searchProducts(req.query.q);
     res.json(products);
   } catch (error) {
-    console.error("خطا در جستجوی محصولات:", error);
-    res.status(500).json({ message: "خطا در جستجو" });
+    res.status(400).json({ message: error.message || "خطا در جستجو" });
   }
 };
 
-
 exports.updateProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updatedFields = req.body;
-
-    const updatedProduct = await Product.findByIdAndUpdate(id, updatedFields, {
-      new: true,
-    });
-
-    if (!updatedProduct) {
-      return res.status(404).json({ message: "محصول یافت نشد" });
-    }
+    const updatedProduct = await productService.updateProduct(req.params.id, req.body);
+    if (!updatedProduct) return res.status(404).json({ message: "محصول یافت نشد" });
 
     res.json({ message: "محصول با موفقیت ویرایش شد", product: updatedProduct });
   } catch (error) {
@@ -199,15 +95,10 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-
 exports.deleteProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deleted = await Product.findByIdAndDelete(id);
-
-    if (!deleted) {
-      return res.status(404).json({ message: "محصول یافت نشد" });
-    }
+    const deleted = await productService.deleteProduct(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "محصول یافت نشد" });
 
     res.json({ message: "محصول با موفقیت حذف شد" });
   } catch (error) {

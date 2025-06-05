@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-const registerUser = async (req, res) => {
+exports.registerUser = async (req, res) => {
   const { name, password, phone } = req.body;
 
   try {
@@ -42,7 +42,7 @@ const registerUser = async (req, res) => {
 };
 
 
-const loginUser = async (req, res) => {
+exports.loginUser = async (req, res) => {
   const { phone, password } = req.body;
 
   try {
@@ -74,7 +74,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-const getUserProfile = async (req, res) => {
+exports.getUserProfile = async (req, res) => {
   try {
     res.json(req.user);
   } catch (error) {
@@ -82,7 +82,7 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-const updateUserProfile = async (req, res) => {
+exports.updateUserProfile = async (req, res) => {
   const { name, phone } = req.body;
 
   try {
@@ -106,7 +106,7 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-const admin = async (req, res) => {
+exports.admin = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
@@ -115,7 +115,7 @@ const admin = async (req, res) => {
   }
 };
 
-const getAllUsers = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
     res.json(users);
@@ -124,7 +124,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const updateUserRole = async (req, res) => {
+exports.updateUserRole = async (req, res) => {
   try {
     const { role } = req.body;
     if (!["user", "admin"].includes(role)) {
@@ -142,7 +142,7 @@ const updateUserRole = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => {
+exports.deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: "کاربر حذف شد" });
@@ -151,13 +151,3 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = {
-  registerUser,
-  loginUser,
-  getUserProfile,
-  updateUserProfile,
-  admin,
-  getAllUsers,
-  updateUserRole,
-  deleteUser,
-};
