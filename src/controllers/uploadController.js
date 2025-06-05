@@ -1,8 +1,4 @@
-const express = require("express");
-const router = express.Router();
-const { upload } = require("../utils/cloudinary");
-
-router.post("/image", upload.single("image"), (req, res) => {
+exports.uploadImage = (req, res) => {
     try {
         console.log("فایل آپلود شده:", req.file);
 
@@ -20,7 +16,4 @@ router.post("/image", upload.single("image"), (req, res) => {
         console.error("خطا در آپلود:", err);
         res.status(500).json({ message: "آپلود با خطا مواجه شد" });
     }
-});
-
-
-module.exports = router;
+};

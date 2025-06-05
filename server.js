@@ -1,15 +1,15 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const connectDB = require("./config/db");
-const userRoutes = require("./routes/userRoutes");
-const productRoutes = require("./routes/productRoutes");
-const cartRoutes = require("./routes/cartRoutes");
-const paymentRoutes = require("./routes/paymentRoutes");
-const verifyRoute = require("./routes/verifyRoute");
-const ordersRouter = require("./routes/orderRoutes");
-const adminRoutes = require("./routes/adminRoutes");
-const upload = require("./routes/upload");
+const connectDB = require("./src/config/db");
+const userRoutes = require("./src/routes/userRoutes");
+const productRoutes = require("./src/routes/productRoutes");
+const cartRoutes = require("./src/routes/cartRoutes");
+const paymentRoutes = require("./src/routes/paymentRoutes");
+const verifyRoute = require("./src/routes/verifyRoute");
+const ordersRouter = require("./src/routes/orderRoutes");
+const adminRoutes = require("./src/routes/adminRoutes");
+const upload = require("./src/routes/upload");
 
 
 dotenv.config();

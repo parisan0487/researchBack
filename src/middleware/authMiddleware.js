@@ -1,11 +1,10 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/UserModel");
+const User = require("../models/User");
 
-// Middleware محافظت از مسیرها
+
 const protect = async (req, res, next) => {
   let token;
 
-  // بررسی هدر Authorization برای دریافت توکن
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
