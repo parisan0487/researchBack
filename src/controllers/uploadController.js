@@ -1,7 +1,5 @@
 exports.uploadImage = (req, res) => {
     try {
-        console.log("فایل آپلود شده:", req.file);
-
         const imageUrl = req.file?.path || req.file?.secure_url;
 
         if (!imageUrl) {
