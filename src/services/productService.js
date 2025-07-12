@@ -17,7 +17,6 @@ exports.getAllProducts = async (query) => {
 };
 
 exports.getProductById = async (id) => {
-    console.log(id)
     const product = await Product.findById(id);
     return product;
 };
