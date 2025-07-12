@@ -17,7 +17,7 @@ exports.getAllProducts = async (query) => {
 };
 
 exports.getProductById = async (id) => {
-    const product = await Product.findOne({ id });
+    const product = await Product.findById(id);
     return product;
 };
 
