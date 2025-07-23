@@ -12,6 +12,16 @@ exports.getAllProducts = async (query) => {
         filters["variants.size"] = { $in: query.size.split(",") };
     }
 
+    if (query.minPrice || query.maxPrice) {
+        filters["variants.price"] = {};
+        if (query.minPrice) {
+            filters["variants.price"].$gte = Number(query.minPrice);
+        }
+        if (query.maxPrice) {
+            filters["variants.price"].$lte = Number(query.maxPrice);
+        }
+    }
+
     const products = await Product.find(filters);
     return products;
 };
